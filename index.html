@@ -1,155 +1,176 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Jam Sadiq's Professional Website</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #f0f0f0;
-            color: #333;
-        }
-
-        .header {
-            background-color: #4b0082;
-            color: white;
-            padding: 20px;
-            text-align: center;
-            position: relative;
-        }
-
-        .header img {
-            position: absolute;
-            top: 20px;
-            right: 40px;
-            border-radius: 50%;
-            width: 150px;
-            height: 150px;
-            object-fit: cover;
-        }
-
-        .header h1 {
-            margin: 0;
-        }
-
-        nav {
-            background-color: #6a0dad;
-            padding: 10px;
-            text-align: center;
-        }
-
-        nav a {
-            color: white;
-            text-decoration: none;
-            margin: 0 15px;
-            font-weight: bold;
-        }
-
-        nav a:hover {
-            text-decoration: underline;
-        }
-
-        .container {
-            width: 80%;
-            margin: 20px auto;
-            padding: 20px;
-            background-color: white;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        #hero {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            align-items: flex-start;
-        }
-
-        #hero img {
-            max-width: 350px;
-            height: auto;
-            border-radius: 10px;
-	    margin-left:20px;
-        }
-
-        .content {
-            flex: 1;
-            margin-right: 20px;
-        }
-
-        .content h2 {
-            color: #4b0082;
-        }
-
-	.content p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        .footer {
-            background-color: #333;
-            color: white;
-            text-align: center;
-            padding: 20px;
-        }
-
-        .footer .container {
-            background-color: #333;
-        }
-
-        .footer a {
-            color: white;
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    <meta name="description" content="Jam Sadiq - Computational Physicist and Gravitational Wave Researcher at SISSA, Trieste">
+    <meta name="keywords" content="Jam Sadiq, gravitational waves, computational physics, SISSA, astrophysics">
+    <meta name="author" content="Jam Sadiq">
+    
+    <title>Jam Sadiq | Computational Physicist & Gravitational Wave Researcher</title>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="assets/css/style.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <!--[if lt IE 9]>
+        <script src="assets/js/html5shiv.js"></script>
+    <![endif]-->
 </head>
-
 <body>
-    <div class="header">
-        <h1>Jam Sadiq</h1>
-        <img src="projects/bayside_beat/images/Jam_portogualpic.jpg" alt="Jam Sadiq">
-    </div>
-    <nav id="mainnav">
-        <a href="index.html">Home</a>
-        <a href="assets/files/CV_Jam.pdf">My CV</a>
-        <a href="pages/astronomy-resources.html">Astronomy Useful Links</a>
-        <a href="pages/gravitational-waves.html">Gravitational Wave Astronomy Links</a>
-        <a href="pages/research.html">Research Projects</a>
-        <a href="pages/cool-ideas.html">Cool Ideas</a>
-        <a href="pages/contact.html">Contact</a>
-    </nav>
-    <div class="container">
-        <div id="hero">
-            <div class="content">
-                <h2>About Me</h2>
-                <p>I am a computational physicist, mathematician, and curious mind. I am a postdoctoral research candidate at SISSA in Trieste, Italy since February 2023. Previously, I was a postdoctoral researcher at IGFAE at USC Santiago de Compostela, Spain from November 2020 until February 2023. I completed my PhD at the Rochester Institute of Technology.</p>
-                <p>My research focuses on gravitational wave data analysis, specifically on rates and population studies of binary black holes in the universe. I also work on the PyGRB search, a modeled search for gravitational waves involving coincident gamma-ray detections. I developed a code for hybridizing numerical relativity and post-Newtonian waveforms for precessing binary black holes. During my PhD, I acquired skills in numerical relativity simulation of binary black holes and developed methods to test the accuracy of analytical spacetime for binary black holes.</p>
-                <p><a href="https://inspirehep.net/authors/1847276">Publication link</a></p>
-                <p>Astronomy fascinates me because it connects us to the vastness of the universe and fuels my curiosity and inspiration. Every day, I look forward to exploring the breathtaking images on Astronomy Picture of the Day <a href="http://apod.nasa.gov/apod">APOD</a>, which continually ignites my passion for the cosmos.
-</p>
-                <h2>Professional Links</h2>
-                <ul>
-                    <li><a href="https://orcid.org/0000-0001-5931-3624">Open Researcher and Contributor ID (ORCID)</a></li>
-                    <li><a href="https://www.linkedin.com/in/jam-sadiq-65468b65/">LinkedIn</a></li>
-                    <li><a href="https://inspirehep.net/authors/1847276">HEP Inspire</a></li>
-                    <li><a href="https://github.com/JAMSADIQ">GitHub</a></li>
-                </ul>
+    <!-- Header Section -->
+    <header class="site-header">
+        <div class="header-content">
+            <div class="header-text">
+                <h1 class="site-title">Jam Sadiq</h1>
+                <p class="site-subtitle">Software Research Engineer | Gravitational Wave Data Analyst</p>
+                <p class="institution">Postdoctoral Researcher at <a href="https://www.ifae.es/" target="_blank" rel="noopener" class="header-link">IFAE</a> & <a href="https://www.pic.es" target="_blank" rel="noopener" class="header-link">PIC</a></p>
+                <p class="institution-sub">UAB Barcelona, Spain</p>
+            </div>
+            <div class="header-image">
+                <img src="assets/images/Jam_portogualpic.jpg" alt="Jam Sadiq - Profile Photo">
             </div>
         </div>
-    </div>
-    <div class="footer">
-        <div class="container">
-            <p>Scuola Internazionale Superiore di Studi Avanzati (SISSA) &bull; Via Bonomea, 265, Trieste TS &bull; 34136, Italy</p>
-            <p>(+39) 3716488719 &bull; jsadiq@sissa.it</p>
-        </div>
-        <p>&copy; 2024 Jam Sadiq</p>
-    </div>
-</body>
+    </header>
 
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainnav">
+        <div class="nav-container">
+            <a href="index.html" class="nav-link active">Home</a>
+            <a href="pages/research.html" class="nav-link">Research</a>
+            <a href="assets/files/CV_Jam.pdf" class="nav-link" target="_blank">CV</a>
+            <a href="pages/astronomy-resources.html" class="nav-link">Resources</a>
+            <a href="pages/gravitational-waves.html" class="nav-link">GW Astronomy</a>
+            <a href="pages/cool-ideas.html" class="nav-link">Ideas</a>
+            <a href="pages/contact.html" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-wrapper">
+            <!-- Main Content Area -->
+            <div class="main-column">
+                <div class="container">
+                    
+                    <!-- About Section -->
+                    <section class="about-section">
+                        <h2 class="section-title">About Me</h2>
+                        <div class="about-content">
+                            <p class="lead-text">
+                                I am a software research engineer and computational physicist passionate about understanding the universe through gravitational waves.
+                            </p>
+                            <p>
+                                Currently, I am a postdoctoral researcher at the <strong><a href="https://www.ifae.es/" target="_blank" rel="noopener">Institut de Física d'Altes Energies (IFAE)</a></strong> and <strong><a href="https://www.pic.es" target="_blank" rel="noopener">Port d'Informació Científica (PIC)</a></strong> at Universitat Autònoma de Barcelona (UAB), Spain. My role involves supporting the <strong>IGWN</strong> (International Gravitational-Wave Observatory Network) and PIC computing group in managing computational resources for the LIGO collaboration, while conducting research in gravitational wave data analysis.
+                            </p>
+                            <p>
+                                Previously, I was a postdoctoral researcher at <strong>IGFAE</strong> at USC Santiago de Compostela, Spain (November 2020 - February 2023) and at <strong>SISSA</strong> in Trieste, Italy (February 2023 - 2024). I completed my PhD at the <strong>Rochester Institute of Technology</strong>.
+                            </p>
+                        </div>
+                    </section>
+
+                    <!-- Research Highlights -->
+                    <section class="research-section">
+                        <h2 class="section-title">Research Focus</h2>
+                        <div class="research-grid">
+                            <div class="research-card">
+                                <div class="card-icon">💻</div>
+                                <h3>Computing Infrastructure</h3>
+                                <p>Supporting IGWN and PIC computing resources for LIGO collaboration's data analysis needs.</p>
+                            </div>
+                            <div class="research-card">
+                                <div class="card-icon">🌌</div>
+                                <h3>GW Data Analysis</h3>
+                                <p>Population studies and rate estimation of binary black hole mergers in the universe.</p>
+                            </div>
+                            <div class="research-card">
+                                <div class="card-icon">💫</div>
+                                <h3>Multi-Messenger Astronomy</h3>
+                                <p>PyGRB search for gravitational waves with coincident gamma-ray detections.</p>
+                            </div>
+                            <div class="research-card">
+                                <div class="card-icon">🔬</div>
+                                <h3>Waveform Modeling</h3>
+                                <p>Hybrid numerical relativity and post-Newtonian waveforms for precessing binaries.</p>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Publications -->
+                    <section class="publications-section">
+                        <h2 class="section-title">Publications</h2>
+                        <p>
+                            View my complete list of publications and research contributions on 
+                            <a href="https://inspirehep.net/authors/1847276" class="external-link" target="_blank" rel="noopener">HEP Inspire</a>.
+                        </p>
+                    </section>
+
+                    <!-- Professional Links -->
+                    <section class="links-section">
+                        <h2 class="section-title">Professional Profiles</h2>
+                        <div class="links-grid">
+                            <a href="https://orcid.org/0000-0001-5931-3624" class="profile-link" target="_blank" rel="noopener">
+                                <span class="link-icon">🆔</span>
+                                <span class="link-text">ORCID</span>
+                            </a>
+                            <a href="https://www.linkedin.com/in/jam-sadiq-65468b65/" class="profile-link" target="_blank" rel="noopener">
+                                <span class="link-icon">💼</span>
+                                <span class="link-text">LinkedIn</span>
+                            </a>
+                            <a href="https://inspirehep.net/authors/1847276" class="profile-link" target="_blank" rel="noopener">
+                                <span class="link-icon">📚</span>
+                                <span class="link-text">HEP Inspire</span>
+                            </a>
+                            <a href="https://github.com/JAMSADIQ" class="profile-link" target="_blank" rel="noopener">
+                                <span class="link-icon">💻</span>
+                                <span class="link-text">GitHub</span>
+                            </a>
+                        </div>
+                    </section>
+
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <aside class="sidebar">
+                <div class="sidebar-card apod-card">
+                    <div class="sidebar-icon">🌠</div>
+                    <h3>Daily Inspiration</h3>
+                    <p class="sidebar-text">
+                        Astronomy fascinates me because it connects us to the vastness of the universe and fuels my curiosity. Every day, I explore breathtaking images on APOD.
+                    </p>
+                    <a href="http://apod.nasa.gov/apod" target="_blank" rel="noopener" class="sidebar-button">
+                        Visit APOD →
+                    </a>
+                </div>
+            </aside>
+
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Contact Information</h3>
+                <p class="institution-full">Institut de Física d'Altes Energies (IFAE)</p>
+                <p class="institution-full">Port d'Informació Científica (PIC)</p>
+                <p>Universitat Autònoma de Barcelona (UAB)</p>
+                <p>Campus UAB, 08193 Bellaterra, Barcelona, Spain</p>
+                <p>
+                    <a href="mailto:jsadiq@ifae.es">jsadiq@ifae.es</a>
+                </p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Jam Sadiq. All rights reserved.</p>
+                <p class="footer-note">Last updated: February 2026</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
 </html>
