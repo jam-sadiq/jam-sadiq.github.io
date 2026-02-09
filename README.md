@@ -12,18 +12,6 @@ This website contains:
 - Resources on gravitational waves and astronomy
 - Contact information
 
-## Structure
-```
-├── index.html              # Landing page
-├── assets/                 # Static assets
-│   ├── css/               # Stylesheets
-│   ├── js/                # JavaScript files
-│   ├── images/            # Images
-│   └── files/             # Downloadable files (CV, papers)
-├── pages/                 # Website pages
-└── projects/              # Project folders
-```
-
 ## Local Development
 1. Clone the repository
 ```bash
