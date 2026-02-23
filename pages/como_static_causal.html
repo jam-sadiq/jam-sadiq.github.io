@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Causal Inference among Players</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            /*background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #1e988a 100%);*/
+            background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 50%, #4a1b5c 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+           /* background: linear-gradient(135deg, #1a2a6c 0%, #b21f1f 50%, #1e988a 100%);*/
+            background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 50%, #4a1b5c 100%);
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="1"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .logo {
+            max-width: 150px;
+            height: auto;
+            margin-bottom: 20px;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            position: relative;
+            z-index: 10;
+            filter: none;
+            mix-blend-mode: normal;
+            background: white;
+            padding: 5px;
+        }
+
+        .main-title {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .demo-section {
+            margin-bottom: 40px;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+            text-align: center;
+        }
+
+        .demo-title {
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4facfe;
+            display: inline-block;
+        }
+
+        .demo-plot {
+            width: 100%;
+            max-width: 600px;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            margin: 20px auto;
+            display: block;
+        }
+
+        .selection-section {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+        .selection-title {
+            color: #2d3748;
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            text-align: center;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #4facfe;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .player-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .player-button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 20px 15px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 60px;
+        }
+
+        .player-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.6);
+            background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        .player-button:active {
+            transform: translateY(-1px);
+        }
+
+        .back-button {
+            display: block;
+            width: 200px;
+            margin: 40px auto 0;
+            padding: 15px 30px;
+            /*background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);*/
+            background: linear-gradient(135deg, #1a1a3e 0%, #2d1b4e 100%);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-align: center;
+            box-shadow: 0 10px 25px rgba(72, 187, 120, 0.4);
+            transition: all 0.3s ease;
+            border: none;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            /*background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);*/
+            background: linear-gradient(135deg, #2d1b4e 0%, #4a1b5c 100%);
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(72, 187, 120, 0.6);
+        }
+
+        .loading-placeholder {
+            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+            background-size: 200% 100%;
+            animation: loading 1.5s infinite;
+            border-radius: 10px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+            font-style: italic;
+        }
+
+        @keyframes loading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        @media (max-width: 768px) {
+            .main-title {
+                font-size: 2rem;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .demo-section, .selection-section {
+                padding: 20px;
+            }
+
+            .player-grid {
+                grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+                gap: 10px;
+            }
+
+            .player-button {
+                padding: 15px 10px;
+                font-size: 1rem;
+                min-height: 50px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="{{ url_for('static', filename='logo2.png') }}" alt="Logo" class="logo">
+            <h1 class="main-title">Causal Inference among Players</h1>
+            <p class="subtitle">Network Analysis Dashboard</p>
+        </div>
+
+        <div class="content">
+            <div class="demo-section">
+                <h2 class="demo-title">Team Network Analysis</h2>
+                <img src="{{ url_for('static', filename='Team_global_Interaction.png') }}" alt="Sample Network" class="demo-plot"
+                     onerror="this.parentElement.innerHTML='<div class=loading-placeholder>Sample network plot not found</div>'">
+                <p style="margin-top: 15px; color: #666; font-style: italic;">
+                    This is the network analysis for the team. Select a player below to view their specific network.
+                </p>
+            </div>
+
+            <div class="selection-section">
+                <h2 class="selection-title">Select Player for Analysis</h2>
+                <div class="player-grid">
+                    <a href="{{ url_for('causal_player', player_id=1) }}" class="player-button">Player 1</a>
+                    <a href="{{ url_for('causal_player', player_id=2) }}" class="player-button">Player 2</a>
+                    <a href="{{ url_for('causal_player', player_id=3) }}" class="player-button">Player 3</a>
+                    <a href="{{ url_for('causal_player', player_id=4) }}" class="player-button">Player 4</a>
+                    <a href="{{ url_for('causal_player', player_id=5) }}" class="player-button">Player 5</a>
+                    <a href="{{ url_for('causal_player', player_id=6) }}" class="player-button">Player 6</a>
+                    <a href="{{ url_for('causal_player', player_id=7) }}" class="player-button">Player 7</a>
+                    <a href="{{ url_for('causal_player', player_id=8) }}" class="player-button">Player 8</a>
+                    <a href="{{ url_for('causal_player', player_id=9) }}" class="player-button">Player 9</a>
+                    <a href="{{ url_for('causal_player', player_id=10) }}" class="player-button">Player 10</a>
+                    <a href="{{ url_for('causal_player', player_id=11) }}" class="player-button">Player 11</a>
+                    <a href="{{ url_for('causal_player', player_id=12) }}" class="player-button">Player 12</a>
+                    <a href="{{ url_for('causal_player', player_id=13) }}" class="player-button">Player 13</a>
+                </div>
+            </div>
+
+            <a href="{{ url_for('coach_lakecomo_dashboard') }}" class="back-button">Return to Dashboard</a>
+        </div>
+    </div>
+</body>
+</html>
