@@ -162,6 +162,29 @@ strong {
     margin-bottom: 0;
 }
 
+/*modifying this*/
+.institution-sub {
+    font-size: 1rem;
+    font-weight: 400;
+    color: #ffffff;  /* Pure white */
+    margin-bottom: 0;
+}
+
+.header-link {
+    color: #ffffff;  /* Pure white */
+    text-decoration: none;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.6);  /* Stronger underline */
+    transition: all var(--transition-fast);
+    font-weight: 500;
+}
+
+.header-link:hover {
+    color: #ffffff;
+    border-bottom-color: #ffffff;  /* Full white on hover */
+}
+
+/*modify above*/
+
 .header-image {
     flex-shrink: 0;
 }
