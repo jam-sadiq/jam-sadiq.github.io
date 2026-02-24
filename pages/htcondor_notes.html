@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HTCondor Notes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0a0e1a;
+      --surface: #111827;
+      --surface2: #1a2235;
+      --border: #1e2d45;
+      --accent: #00d4ff;
+      --accent2: #7c3aed;
+      --accent3: #10b981;
+      --text: #e2e8f0;
+      --text-muted: #8899aa;
+      --text-dim: #4a6080;
+      --glow: rgba(0, 212, 255, 0.15);
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      line-height: 1.75;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* Animated grid background */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* Glowing orbs */
+    body::after {
+      content: '';
+      position: fixed;
+      top: -200px;
+      right: -200px;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      max-width: 960px;
+      margin: 0 auto;
+      padding: 60px 32px 100px;
+    }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 40px;
+      margin-bottom: 56px;
+      animation: fadeDown 0.7s ease both;
+    }
+
+    .header-eyebrow {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .header-eyebrow::before {
+      content: '';
+      display: inline-block;
+      width: 32px; height: 1px;
+      background: var(--accent);
+    }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: clamp(2.4rem, 5vw, 3.6rem);
+      line-height: 1.1;
+      letter-spacing: -1px;
+      color: #fff;
+    }
+
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-subtitle {
+      margin-top: 14px;
+      font-size: 1rem;
+      color: var(--text-muted);
+      max-width: 560px;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 20px;
+    }
+
+    .badge {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 4px 12px;
+      border-radius: 4px;
+      border: 1px solid;
+    }
+    .badge-blue  { border-color: var(--accent);  color: var(--accent);  background: rgba(0,212,255,0.06); }
+    .badge-purple{ border-color: var(--accent2); color: var(--accent2); background: rgba(124,58,237,0.06); }
+    .badge-green { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.06); }
+
+    /* ── Section titles ── */
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.55rem;
+      color: #fff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    .section-title .num {
+      font-family: 'Space Mono', monospace;
+      font-size: 0.72rem;
+      color: var(--accent);
+      background: rgba(0,212,255,0.08);
+      border: 1px solid rgba(0,212,255,0.25);
+      padding: 2px 8px;
+      border-radius: 3px;
+      letter-spacing: 2px;
+    }
+
+    .section-desc {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-bottom: 24px;
+      font-style: italic;
+    }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+      transition: border-color 0.25s, box-shadow 0.25s;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    .card:hover {
+      border-color: rgba(0,212,255,0.3);
+      box-shadow: 0 0 30px rgba(0,212,255,0.07);
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 3px; height: 100%;
+      background: linear-gradient(180deg, var(--accent), transparent);
+      border-radius: 12px 0 0 12px;
+    }
+
+    .card.purple::before { background: linear-gradient(180deg, var(--accent2), transparent); }
+    .card.green::before  { background: linear-gradient(180deg, var(--accent3), transparent); }
+
+    .card h3 {
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 10px;
+    }
+
+    .card p {
+      font-size: 0.95rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Info grid ── */
+    .info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    @media (max-width: 600px) {
+      .info-grid { grid-template-columns: 1fr; }
+    }
+
+    .info-tile {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 20px 22px;
+      transition: transform 0.2s, border-color 0.2s;
+    }
+    .info-tile:hover {
+      transform: translateY(-2px);
+      border-color: rgba(0,212,255,0.2);
+    }
+    .info-tile .tile-icon {
+      font-size: 1.4rem;
+      margin-bottom: 8px;
+    }
+    .info-tile .tile-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 6px;
+    }
+    .info-tile p {
+      font-size: 0.88rem;
+      color: var(--text-muted);
+    }
+
+    /* ── Feature list ── */
+    .feature-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .feature-list li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 0.92rem;
+      color: var(--text-muted);
+    }
+
+    .feature-list li::before {
+      content: '▸';
+      color: var(--accent);
+      font-size: 0.8rem;
+      margin-top: 3px;
+      flex-shrink: 0;
+    }
+
+    .feature-list.green li::before  { color: var(--accent3); }
+    .feature-list.purple li::before { color: var(--accent2); }
+
+    /* ── Links ── */
+    a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(0,212,255,0.3);
+      transition: color 0.2s, border-color 0.2s;
+    }
+    a:hover {
+      color: #fff;
+      border-color: #fff;
+    }
+    a.green-link  { color: var(--accent3); border-color: rgba(16,185,129,0.3); }
+    a.green-link:hover { color: #fff; }
+    a.purple-link { color: var(--accent2); border-color: rgba(124,58,237,0.3); }
+    a.purple-link:hover { color: #fff; }
+
+    /* ── Link buttons ── */
+    .link-block {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+
+    .link-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      border: 1px solid;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    .link-btn::after { content: none; }
+    .link-btn-blue {
+      border-color: rgba(0,212,255,0.4);
+      color: var(--accent);
+      background: rgba(0,212,255,0.05);
+    }
+    .link-btn-blue:hover {
+      background: rgba(0,212,255,0.15);
+      color: var(--accent);
+      border-color: var(--accent);
+      border-bottom: 1px solid var(--accent);
+      box-shadow: 0 0 16px rgba(0,212,255,0.15);
+    }
+    .link-btn-red {
+      border-color: rgba(239,68,68,0.4);
+      color: #f87171;
+      background: rgba(239,68,68,0.05);
+    }
+    .link-btn-red:hover {
+      background: rgba(239,68,68,0.12);
+      color: #f87171;
+      border-color: #f87171;
+      border-bottom: 1px solid #f87171;
+    }
+    .link-btn-purple {
+      border-color: rgba(124,58,237,0.4);
+      color: var(--accent2);
+      background: rgba(124,58,237,0.05);
+    }
+    .link-btn-purple:hover {
+      background: rgba(124,58,237,0.15);
+      color: var(--accent2);
+      border-color: var(--accent2);
+      border-bottom: 1px solid var(--accent2);
+    }
+    .link-btn-green {
+      border-color: rgba(16,185,129,0.4);
+      color: var(--accent3);
+      background: rgba(16,185,129,0.05);
+    }
+    .link-btn-green:hover {
+      background: rgba(16,185,129,0.15);
+      color: var(--accent3);
+      border-color: var(--accent3);
+      border-bottom: 1px solid var(--accent3);
+    }
+
+    /* ── Divider ── */
+    .section-divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 52px 0 48px;
+      position: relative;
+    }
+    .section-divider::before {
+      content: attr(data-label);
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      background: var(--bg);
+      padding: 0 16px;
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+    }
+
+    /* ── Callout box ── */
+    .callout {
+      background: linear-gradient(135deg, rgba(124,58,237,0.1), rgba(0,212,255,0.05));
+      border: 1px solid rgba(124,58,237,0.3);
+      border-radius: 12px;
+      padding: 22px 28px;
+      margin: 20px 0;
+    }
+    .callout.green-callout {
+      background: linear-gradient(135deg, rgba(16,185,129,0.08), rgba(0,212,255,0.03));
+      border-color: rgba(16,185,129,0.25);
+    }
+    .callout-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent2);
+      margin-bottom: 8px;
+    }
+    .callout.green-callout .callout-label { color: var(--accent3); }
+    .callout p { font-size: 0.93rem; color: var(--text-muted); }
+
+    /* ── Code snippet ── */
+    .code-box {
+      background: #060d1a;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 18px 22px;
+      margin: 14px 0;
+      font-family: 'Space Mono', monospace;
+      font-size: 12px;
+      color: #a0c4ff;
+      line-height: 1.8;
+      overflow-x: auto;
+    }
+    .code-box .keyword { color: var(--accent); }
+    .code-box .value   { color: var(--accent3); }
+    .code-box .comment { color: var(--text-dim); }
+
+    /* ── Architecture diagram ── */
+    .arch-diagram {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+      margin: 20px 0;
+      text-align: center;
+    }
+
+    .arch-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin: 6px 0;
+    }
+
+    .arch-box {
+      padding: 8px 18px;
+      border-radius: 6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      border: 1px solid;
+    }
+    .arch-box.blue   { border-color: var(--accent);  color: var(--accent);  background: rgba(0,212,255,0.07); }
+    .arch-box.purple { border-color: var(--accent2); color: var(--accent2); background: rgba(124,58,237,0.07); }
+    .arch-box.green  { border-color: var(--accent3); color: var(--accent3); background: rgba(16,185,129,0.07); }
+    .arch-box.gray   { border-color: var(--border);  color: var(--text-muted); background: var(--surface); }
+
+    .arch-arrow {
+      color: var(--text-dim);
+      font-size: 1rem;
+    }
+
+    .arch-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      margin-bottom: 16px;
+    }
+
+    /* ── Animations ── */
+    @keyframes fadeDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .section { animation: fadeUp 0.6s ease both; }
+    .section:nth-child(2) { animation-delay: 0.1s; }
+    .section:nth-child(3) { animation-delay: 0.2s; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border);
+      margin-top: 80px;
+      padding-top: 28px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="page-wrapper">
+
+  <!-- ── HEADER ── -->
+  <header>
+    <div class="header-eyebrow">Study Notes · Computing Infrastructure</div>
+    <h1>HTCondor <span>&amp; HTCondor-CE</span></h1>
+    <p class="header-subtitle">A technical reference covering High-Throughput Computing, the HTCondor software suite, and the Compute Entrypoint (CE) for grid integration.</p>
+    <div class="badge-row">
+      <span class="badge badge-blue">HTC</span>
+      <span class="badge badge-purple">Grid Computing</span>
+      <span class="badge badge-green">Open Source</span>
+    </div>
+  </header>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — WHAT IS HTCONDOR?
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">01</span> What is HTCondor?
+    </div>
+    <p class="section-desc">Core concept · High-Throughput Computing system developed at UW–Madison</p>
+
+    <div class="card">
+      <h3>Definition</h3>
+      <p>
+        HTCondor is an <strong style="color:#e2e8f0">open-source software system</strong> that creates a
+        <strong style="color:var(--accent)">High-Throughput Computing (HTC)</strong> environment. It effectively
+        uses the computing power of machines connected over a network — be they a single cluster, a set of campus
+        clusters, standalone cloud resources, or international grids. Its power comes from the ability to harness
+        shared resources with <em>distributed ownership</em>.
+      </p>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">🔑 Key Insight — HTC vs HPC</div>
+      <p>
+        <strong style="color:#e2e8f0">High-Performance Computing (HPC)</strong> delivers enormous power over a
+        <em>short time</em> (measured in FLOPS per second). <strong style="color:var(--accent2)">High-Throughput
+        Computing (HTC)</strong> delivers large amounts of power over a <em>long time</em> — scientists care about
+        floating-point operations per month or year, not per second. HTCondor is built specifically for this model.
+      </p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="tile-icon">🏛️</div>
+        <div class="tile-label">Origin</div>
+        <p>Developed by the HTCondor team at the <strong style="color:#e2e8f0">University of Wisconsin–Madison</strong>, Computer Sciences Department. Free and open-source under Apache License 2.0.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">⚙️</div>
+        <div class="tile-label">Platform Support</div>
+        <p>Runs on <strong style="color:#e2e8f0">Linux, Unix, macOS, FreeBSD, and Windows</strong>. Can integrate dedicated rack clusters and idle desktop machines (cycle scavenging) into one pool.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🔁</div>
+        <div class="tile-label">Job Checkpointing</div>
+        <p>Jobs can produce and resume from checkpoints — saving weeks of computation if a machine crashes or is rebooted for maintenance.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🎯</div>
+        <div class="tile-label">ClassAds Matchmaking</div>
+        <p>Machines advertise their resources (RAM, CPU speed, load). Jobs submit requirements. HTCondor matches them — like classified newspaper ads. No need to pick queues manually.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Key Features at a Glance</h3>
+      <ul class="feature-list">
+        <li>No account (login) required on remote worker machines — HTCondor uses file transfer and split execution mechanisms.</li>
+        <li>Supports <strong style="color:#e2e8f0">DAGMan</strong> for workflow dependencies: job C starts only after jobs A and B complete.</li>
+        <li>Supports sequential and parallel jobs across multiple "universes" (vanilla, standard, local, MPI, PVM).</li>
+        <li>Idle desktops are put to work; jobs are preempted if the owner returns (keystroke, mouse move, high CPU usage).</li>
+        <li><strong style="color:#e2e8f0">HTCondor-G</strong> allows jobs to use resources outside its direct control: Globus, Nordugrid ARC, UNICORE, Amazon EC2, PBS/Torque, LSF, and more.</li>
+        <li><strong style="color:#e2e8f0">GlideinWMS / Glidein</strong> makes remote Globus grid resources transparently part of a virtual HTCondor cluster.</li>
+      </ul>
+    </div>
+
+    <div class="card">
+      <h3>Sample Job Submit File</h3>
+      <div class="code-box">
+        <span class="comment"># basic.submit — A minimal HTCondor job description</span><br>
+        <span class="keyword">executable</span>   = my_analysis.sh<br>
+        <span class="keyword">arguments</span>    = <span class="value">input_data.txt</span><br>
+        <span class="keyword">output</span>       = <span class="value">job_$(ClusterId).out</span><br>
+        <span class="keyword">error</span>        = <span class="value">job_$(ClusterId).err</span><br>
+        <span class="keyword">log</span>          = <span class="value">job.log</span><br>
+        <span class="keyword">request_cpus</span> = <span class="value">2</span><br>
+        <span class="keyword">request_memory</span> = <span class="value">4GB</span><br>
+        <span class="keyword">queue</span> <span class="value">100</span> <span class="comment"># submit 100 identical jobs</span>
+      </div>
+    </div>
+
+    <div class="link-block">
+      <a href="https://htcondor.org/htcondor/overview/" target="_blank" class="link-btn link-btn-blue">
+        🔗 Official Overview
+      </a>
+      <a href="https://www.youtube.com/watch?v=8jadQkAdU1k&t=21s" target="_blank" class="link-btn link-btn-red">
+        ▶ YouTube Intro Video
+      </a>
+      <a href="https://htcondor.org/htcondor/documentation/" target="_blank" class="link-btn link-btn-purple">
+        📚 Documentation
+      </a>
+    </div>
+  </div>
+
+  <hr class="section-divider" data-label="documentation" />
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — DOCUMENTATION HIGHLIGHTS
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">02</span> Important Documentation
+    </div>
+    <p class="section-desc">Key areas to study from the official HTCondor manual</p>
+
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="tile-icon">📖</div>
+        <div class="tile-label">Manual</div>
+        <p>The <a href="https://htcondor.readthedocs.io/en/main/" target="_blank">HTCondor Manual</a> covers installation, configuration, job submission, and administration in full depth.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🚀</div>
+        <div class="tile-label">Quick Start</div>
+        <p>The <a href="https://htcondor.org/htcondor/documentation/" target="_blank">Documentation index</a> organises guides for users, administrators, and developers with versioned releases.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🔧</div>
+        <div class="tile-label">Configuration</div>
+        <p>HTCondor is highly configurable via flat config files. The <strong style="color:#e2e8f0">condor_config</strong> system lets admins define policies, preemption rules, accounting groups, and more.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🌐</div>
+        <div class="tile-label">Grid Integration</div>
+        <p>Documentation covers connecting HTCondor pools to grids via flocking, glidein, and the HTCondor-CE gateway — enabling federated resource sharing across institutions.</p>
+      </div>
+    </div>
+
+    <div class="card purple">
+      <h3>Core Concepts Worth Mastering</h3>
+      <ul class="feature-list purple">
+        <li><strong style="color:#e2e8f0">ClassAds language</strong> — The declarative matchmaking system that describes both job requirements and machine capabilities.</li>
+        <li><strong style="color:#e2e8f0">Universes</strong> — Execution environments for jobs: <em>vanilla</em> (most programs), <em>standard</em> (checkpointing + remote I/O), <em>docker</em>, <em>MPI</em>, <em>local</em>, and more.</li>
+        <li><strong style="color:#e2e8f0">DAGMan</strong> (Directed Acyclic Graph Manager) — Submit complex multi-step workflows where job order and dependencies are defined.</li>
+        <li><strong style="color:#e2e8f0">Flocking</strong> — Allow jobs to overflow to other HTCondor pools when local resources are saturated.</li>
+        <li><strong style="color:#e2e8f0">Accounting &amp; Fairshare</strong> — Weighted fair-sharing policies ensure no single user monopolises the pool.</li>
+        <li><strong style="color:#e2e8f0">Schedd / Startd / Collector / Negotiator</strong> — The four key HTCondor daemons and their roles in the system.</li>
+      </ul>
+    </div>
+
+    <div class="link-block">
+      <a href="https://htcondor.org/htcondor/documentation/" target="_blank" class="link-btn link-btn-purple">
+        📚 Full Documentation Index
+      </a>
+      <a href="https://htcondor.readthedocs.io/en/main/" target="_blank" class="link-btn link-btn-blue">
+        📝 ReadTheDocs Manual
+      </a>
+    </div>
+  </div>
+
+  <hr class="section-divider" data-label="compute entrypoint" />
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 3 — HTCONDOR-CE
+  ══════════════════════════════════════════════ -->
+  <div class="section">
+    <div class="section-title">
+      <span class="num">03</span> HTCondor-CE — Compute Entrypoint
+    </div>
+    <p class="section-desc">Grid gateway · The "door" to your local cluster for the outside world</p>
+
+    <div class="card green">
+      <h3>What is HTCondor-CE?</h3>
+      <p>
+        <strong style="color:#e2e8f0">HTCondor-CE (Compute Entrypoint)</strong> is a special configuration of HTCondor
+        designed as a <strong style="color:var(--accent3)">gateway for computing grids</strong> such as the
+        <a href="https://www.egi.eu/" target="_blank" class="green-link">European Grid Infrastructure (EGI)</a> and the
+        <a href="https://osg-htc.org/" target="_blank" class="green-link">Open Science Grid (OSG)</a>.
+        It acts as the <em>"door"</em> through which remote organisations submit
+        <strong style="color:#e2e8f0">Resource Allocation Requests (RARs)</strong>, which are then
+        authorised and delegated to the site's local batch system.
+      </p>
+    </div>
+
+    <div class="callout green-callout">
+      <div class="callout-label">📌 In Plain English</div>
+      <p>
+        Imagine your institution has a cluster running Slurm. You want to join a global research grid so
+        external scientists can run jobs on your machines. HTCondor-CE sits at the edge of your network,
+        accepts incoming job requests from the grid, checks they are authorised, transforms them into
+        Slurm jobs, and submits them — all automatically. Your existing Slurm setup doesn't change.
+      </p>
+    </div>
+
+    <!-- Architecture diagram -->
+    <div class="arch-diagram">
+      <div class="arch-label">HTCondor-CE Architecture — Job Flow</div>
+      <div class="arch-row">
+        <div class="arch-box purple">EGI / OSG Grid</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">Pilot Jobs (RARs)</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">HTCondor-CE</div>
+      </div>
+      <div style="text-align:center;color:var(--text-dim);font-size:1.5rem;margin:4px 0;">↓</div>
+      <div class="arch-row">
+        <div class="arch-box gray">Auth &amp; Authorisation</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box blue">Job Router Daemon</div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-box gray">Transform / Route</div>
+      </div>
+      <div style="text-align:center;color:var(--text-dim);font-size:1.5rem;margin:4px 0;">↓</div>
+      <div class="arch-row">
+        <div class="arch-box green">Slurm</div>
+        <div class="arch-box green">PBS/Torque</div>
+        <div class="arch-box green">HTCondor</div>
+        <div class="arch-box green">LSF</div>
+        <div class="arch-box green">Grid Engine</div>
+      </div>
+      <p style="font-family:'Space Mono',monospace;font-size:10px;color:var(--text-dim);margin-top:12px;letter-spacing:1px;">LOCAL BATCH SYSTEM (your existing cluster)</p>
+    </div>
+
+    <div class="info-grid">
+      <div class="info-tile">
+        <div class="tile-icon">🔐</div>
+        <div class="tile-label">Security</div>
+        <p>Uses <strong style="color:#e2e8f0">host certificates</strong> (PKI/CAs) and <strong style="color:#e2e8f0">bearer tokens</strong> for authentication. The CE presents certificates to prove its identity, like HTTPS for websites.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🔀</div>
+        <div class="tile-label">Job Routing</div>
+        <p>The <strong style="color:#e2e8f0">Job Router daemon</strong> transforms incoming grid jobs into local batch jobs via configuration variables — no code modification needed.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">🛩️</div>
+        <div class="tile-label">Pilot Jobs</div>
+        <p>Most incoming grid jobs are <strong style="color:#e2e8f0">pilot jobs</strong> from factories (e.g. GlideinWMS). They create containers/environments for actual end-user jobs to run inside.</p>
+      </div>
+      <div class="info-tile">
+        <div class="tile-icon">⚡</div>
+        <div class="tile-label">Scale</div>
+        <p>Responsible for provisioning ~<strong style="color:var(--accent3)">9 million core-hours per day</strong> across ~170 endpoints globally, as part of the OSG Compute Federation.</p>
+      </div>
+    </div>
+
+    <div class="card green">
+      <h3>Why Use HTCondor-CE?</h3>
+      <ul class="feature-list green">
+        <li><strong style="color:#e2e8f0">Grid participation without rewriting your batch system</strong> — CE is a thin layer on top of your existing Slurm, PBS, LSF, or HTCondor installation.</li>
+        <li><strong style="color:#e2e8f0">Supports all major batch systems</strong> — Grid Engine, HTCondor, LSF, PBS Pro/Torque, and Slurm are all natively supported.</li>
+        <li><strong style="color:#e2e8f0">Routing as configuration</strong> — Job transformation rules are defined in config files, so they persist across software upgrades without touching internals.</li>
+        <li><strong style="color:#e2e8f0">Standard security model</strong> — Integrates with the established OSG/EGI PKI and token-based auth infrastructure.</li>
+        <li><strong style="color:#e2e8f0">Open access for science</strong> — Enables your resources to serve international research communities (LHC experiments, bioinformatics, astrophysics, etc.).</li>
+        <li><strong style="color:#e2e8f0">Developed &amp; maintained by CHTC</strong> — The Center for High Throughput Computing at UW–Madison provides ongoing support and releases.</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <div class="callout-label">ℹ️ Note on Naming</div>
+      <p>HTCondor-CE was previously known as the <strong style="color:#e2e8f0">"Compute Element"</strong>. It was renamed to <strong style="color:var(--accent2)">Compute Entrypoint</strong> to better reflect its role as an entry point, not a full compute resource itself.</p>
+    </div>
+
+    <div class="link-block">
+      <a href="https://htcondor.org/htcondor-ce/overview/" target="_blank" class="link-btn link-btn-green">
+        🔗 HTCondor-CE Overview
+      </a>
+      <a href="https://htcondor.com/htcondor-ce/" target="_blank" class="link-btn link-btn-green">
+        📖 CE Documentation
+      </a>
+      <a href="https://osg-htc.org/" target="_blank" class="link-btn link-btn-blue">
+        🌐 Open Science Grid
+      </a>
+      <a href="https://www.egi.eu/" target="_blank" class="link-btn link-btn-purple">
+        🌐 EGI Infrastructure
+      </a>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <span>HTCondor Notes · UW–Madison CHTC</span>
+    <span>
+      <a href="https://htcondor.org/" target="_blank" style="border-bottom:none;">htcondor.org</a>
+      &nbsp;·&nbsp;
+      <a href="https://htcondor.org/htcondor-ce/overview/" target="_blank" style="border-bottom:none;">htcondor-ce overview</a>
+    </span>
+  </footer>
+
+</div>
+</body>
+</html>
