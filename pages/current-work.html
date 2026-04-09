@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Jam Sadiq - Current Research Projects and Daily Progress">
+    <meta name="author" content="Jam Sadiq">
+    
+    <title>Current Work | Jam Sadiq</title>
+    
+    <!-- Stylesheet -->
+    <link rel="stylesheet" href="../assets/css/style.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* Additional styles for current work page */
+        .page-header {
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .page-header h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        .page-header p {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.1rem;
+            margin: 0;
+        }
+        
+        .project-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem 4rem;
+        }
+        
+        .project-card {
+            background: white;
+            border-radius: 12px;
+            padding: 2.5rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            border-left: 5px solid #3b82f6;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .project-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(59, 130, 246, 0.2);
+        }
+        
+        .project-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .project-number {
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        
+        .project-title {
+            flex: 1;
+        }
+        
+        .project-title h2 {
+            color: #1e3a8a;
+            font-size: 1.8rem;
+            margin: 0 0 0.3rem 0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .project-subtitle {
+            color: #64748b;
+            font-size: 0.95rem;
+            font-style: italic;
+            margin: 0;
+        }
+        
+        .project-description {
+            color: #475569;
+            line-height: 1.8;
+            margin-bottom: 1.5rem;
+            font-size: 1.05rem;
+        }
+        
+        .objectives-section {
+            background: #f8fafc;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1.5rem;
+        }
+        
+        .objectives-section h3 {
+            color: #1e3a8a;
+            font-size: 1.2rem;
+            margin: 0 0 1rem 0;
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .objectives-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .objectives-list li {
+            padding: 0.8rem 0 0.8rem 2.5rem;
+            position: relative;
+            color: #334155;
+            line-height: 1.6;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .objectives-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .objectives-list li::before {
+            content: "→";
+            position: absolute;
+            left: 0.5rem;
+            color: #3b82f6;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+        
+        .task-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .task-item {
+            background: white;
+            padding: 1.2rem;
+            border-radius: 8px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        
+        .task-item:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.1);
+        }
+        
+        .task-item h4 {
+            color: #1e3a8a;
+            font-size: 1rem;
+            margin: 0 0 0.5rem 0;
+            font-weight: 600;
+        }
+        
+        .task-item p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+            line-height: 1.5;
+        }
+        
+        .meetings-section {
+            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+        
+        .meetings-section h4 {
+            color: #1e3a8a;
+            font-size: 1.1rem;
+            margin: 0 0 1rem 0;
+        }
+        
+        .meeting-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+        }
+        
+        .meeting-badge {
+            background: white;
+            color: #1e40af;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            border: 1px solid #3b82f6;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.1);
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-left: 0.5rem;
+        }
+        
+        .status-active {
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .status-ongoing {
+            background: #fef3c7;
+            color: #92400e;
+        }
+        
+        .back-link {
+            display: inline-block;
+            margin: 2rem 0;
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .back-link:hover {
+            color: #2563eb;
+            transform: translateX(-5px);
+        }
+        
+        .last-updated {
+            text-align: center;
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-top: 3rem;
+            padding-top: 2rem;
+            border-top: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="main-nav" id="mainnav">
+        <div class="nav-container">
+            <a href="../index.html" class="nav-link">Home</a>
+            <a href="research.html" class="nav-link">Research</a>
+            <a href="current-work.html" class="nav-link active">Current Work</a>
+            <a href="../assets/files/CV_Jam.pdf" class="nav-link" target="_blank">CV</a>
+            <a href="astronomy-resources.html" class="nav-link">Resources</a>
+            <a href="gravitational-waves.html" class="nav-link">GW Astronomy</a>
+            <a href="cool-ideas.html" class="nav-link">Ideas</a>
+            <a href="contact.html" class="nav-link">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <h1>Current Research & Daily Progress</h1>
+        <p>Ongoing projects at IFAE & PIC - Barcelona</p>
+    </div>
+
+    <!-- Main Content -->
+    <div class="project-container">
+        
+        <!-- Project 1: BBH Population Analysis -->
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-number">1</div>
+                <div class="project-title">
+                    <h2>Population Analysis of Binary Black Holes</h2>
+                    <p class="project-subtitle">Statistical Modeling & Astrophysical Interpretation</p>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            
+            <p class="project-description">
+                Investigating the demographic properties of binary black hole (BBH) populations through advanced statistical methods, with a focus on understanding mass-spin correlations and identifying potential subpopulations. This work combines cutting-edge machine learning techniques with traditional statistical approaches to extract astrophysical insights from gravitational wave observations.
+            </p>
+            
+            <div class="objectives-section">
+                <h3>Research Objectives</h3>
+                <ul class="objectives-list">
+                    <li>
+                        <strong>KDE with Selection Function:</strong> Implement kernel density estimation incorporating detector selection effects to explore correlations between mass and spin parameters. Aim to identify distinct subpopulations of binary black holes and characterize their properties.
+                    </li>
+                    <li>
+                        <strong>Normalizing Flows:</strong> Apply normalizing flow models as a complementary approach to KDE. Compare results between traditional KDE and normalizing flows to assess robustness and identify potential systematic differences in population inference.
+                    </li>
+                    <li>
+                        <strong>Astrophysical Modeling & Publication:</strong> Develop physically-motivated astrophysical models to interpret observed BBH population features. Prepare manuscript explaining formation channels, evolutionary pathways, and environmental factors shaping the observed binary black hole population.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Project 2: PyCBC Workflow & Anti-Glitch -->
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-number">2</div>
+                <div class="project-title">
+                    <h2>PyCBC Workflow & Anti-Glitch Development</h2>
+                    <p class="project-subtitle">Pipeline Development & Machine Learning for Data Quality</p>
+                </div>
+                <span class="status-badge status-active">Active</span>
+            </div>
+            
+            <p class="project-description">
+                Developing robust data analysis infrastructure for gravitational wave searches through the PyCBC pipeline, with emphasis on glitch mitigation strategies. This project combines software development with machine learning applications to improve the reliability of gravitational wave detections and support IGWN computing operations.
+            </p>
+            
+            <div class="objectives-section">
+                <h3>Research Objectives</h3>
+                <ul class="objectives-list">
+                    <li>
+                        <strong>PyCBC Glitch Executable:</strong> Develop a dedicated PyCBC executable for anti-glitch analysis. Create tools and workflows that can automatically identify and mitigate detector glitches that could contaminate gravitational wave searches.
+                    </li>
+                    <li>
+                        <strong>PyCBC Workflow Understanding:</strong> Gain comprehensive understanding of PyCBC workflow architecture to provide effective computing support for IGWN operations. Document workflow structure, dependencies, and resource requirements.
+                    </li>
+                    <li>
+                        <strong>Machine Learning for Glitch Detection:</strong> Investigate unsupervised deep learning methods for glitch forecasting and classification. Develop models that can predict detector glitches or identify signals from noise, improving data quality and search sensitivity.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Project 3: IGWN Computing Tasks -->
+        <div class="project-card">
+            <div class="project-header">
+                <div class="project-number">3</div>
+                <div class="project-title">
+                    <h2>IGWN Computing Infrastructure Support</h2>
+                    <p class="project-subtitle">Grid Computing, Workflow Optimization & System Administration</p>
+                </div>
+                <span class="status-badge status-ongoing">Ongoing</span>
+            </div>
+            
+            <p class="project-description">
+                Supporting the computational infrastructure for the International Gravitational-Wave Observatory Network (IGWN) through active participation in distributed computing operations, workflow optimization, and system monitoring. This role involves regular collaboration with the global IGWN computing team and hands-on technical work with HTCondor, containerization, and grid computing systems.
+            </p>
+            
+            <div class="meetings-section">
+                <h4>📅 Regular Meetings & Participation</h4>
+                <div class="meeting-list">
+                    <div class="meeting-badge">HTCondor Call (Weekly)</div>
+                    <div class="meeting-badge">Software DevOps Call (Weekly)</div>
+                    <div class="meeting-badge">IGWN Grid Call (Weekly)</div>
+                    <div class="meeting-badge">OSG Consortium Call (Bi-weekly)</div>
+                </div>
+            </div>
+            
+            <div class="objectives-section">
+                <h3>Current Tasks</h3>
+                <div class="task-grid">
+                    <div class="task-item">
+                        <h4>🖥️ ICINGA Dashboard</h4>
+                        <p>Developing and maintaining monitoring dashboard to track HTCondor job status, resource utilization, and system health across IGWN computing sites. Implementing alerts and visualization for real-time infrastructure monitoring.</p>
+                    </div>
+                    <div class="task-item">
+                        <h4>⚙️ PyCBC Workflow Comparison</h4>
+                        <p>Benchmarking PyCBC workflow performance between OSPool and IGWN pool environments. Analyzing resource efficiency, job completion times, and identifying optimization opportunities for distributed computing.</p>
+                    </div>
+                    <div class="task-item">
+                        <h4>📦 Container & Orchestration</h4>
+                        <p>Working with Apptainer/Singularity containers, contributing to JIRA issues, exploring Kubernetes deployment strategies, and implementing OpenBao for secrets management in distributed computing environments.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="objectives-section" style="margin-top: 1.5rem;">
+                <h3>Learning Notes - HTCondor</h3>
+                <ul class="objectives-list">
+                    <li>Understanding HTCondor ClassAds and job routing mechanisms</li>
+                    <li>Configuring job priorities and resource allocation policies</li>
+                    <li>Implementing job monitoring and failure recovery strategies</li>
+                    <li>Optimizing data transfer and staging for large-scale workflows</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Back Link & Last Updated -->
+        <a href="../index.html" class="back-link">← Back to Home</a>
+        
+        <div class="last-updated">
+            <p><strong>Last Updated:</strong> February 2026</p>
+            <p><em>This page is regularly updated to reflect current research progress</em></p>
+        </div>
+
+    </div>
+
+    <!-- Footer -->
+    <footer class="site-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h3>Contact Information</h3>
+                <p class="institution-full">Institut de Física d'Altes Energies (IFAE)</p>
+                <p class="institution-full">Port d'Informació Científica (PIC)</p>
+                <p>Universitat Autònoma de Barcelona (UAB)</p>
+                <p>Campus UAB, 08193 Bellaterra, Barcelona, Spain</p>
+                <p>
+                    <a href="mailto:jsadiq@ifae.es">jsadiq@ifae.es</a>
+                </p>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 Jam Sadiq. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>
