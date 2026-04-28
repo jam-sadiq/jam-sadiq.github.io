@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Bookmarks</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #161a22;
+    --surface2: #1e2430;
+    --border: #2a3040;
+    --accent: #4fffb0;
+    --accent2: #38bdf8;
+    --accent3: #f97316;
+    --text: #e2e8f0;
+    --text-dim: #7c8fa8;
+    --text-dimmer: #3d4f65;
+    --glow: rgba(79,255,176,0.15);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* Subtle grid background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,255,176,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,255,176,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .page-wrap {
+    position: relative;
+    z-index: 1;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 48px 24px 80px;
+  }
+
+  /* Header */
+  header {
+    margin-bottom: 48px;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 32px;
+  }
+
+  .header-top {
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 2rem;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+    color: var(--accent);
+    text-shadow: 0 0 30px var(--glow);
+  }
+
+  .count-badge {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text-dim);
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: var(--surface);
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    font-weight: 300;
+  }
+
+  /* Search */
+  .search-wrap {
+    margin-bottom: 36px;
+    position: relative;
+  }
+
+  .search-wrap::before {
+    content: '⌕';
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    color: var(--text-dimmer);
+    pointer-events: none;
+  }
+
+  #search {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 16px 12px 42px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  #search::placeholder { color: var(--text-dimmer); }
+
+  #search:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(79,255,176,0.1);
+  }
+
+  /* Category tabs */
+  .tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 36px;
+  }
+
+  .tab {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.72rem;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .tab:hover { color: var(--text); border-color: var(--text-dimmer); }
+
+  .tab.active {
+    background: var(--accent);
+    color: #0d0f14;
+    border-color: var(--accent);
+    font-weight: 500;
+  }
+
+  /* Category sections */
+  .section {
+    margin-bottom: 40px;
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .section-icon { font-size: 1rem; }
+
+  .section-title {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  .section-count {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dimmer);
+  }
+
+  /* Link grid */
+  .link-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 8px;
+  }
+
+  .link-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 10px 14px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.15s;
+    overflow: hidden;
+  }
+
+  .link-card:hover {
+    border-color: var(--accent2);
+    background: var(--surface2);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  }
+
+  .link-favicon {
+    width: 16px;
+    height: 16px;
+    border-radius: 3px;
+    flex-shrink: 0;
+    margin-top: 2px;
+    opacity: 0.8;
+  }
+
+  .link-text {
+    min-width: 0;
+  }
+
+  .link-name {
+    display: block;
+    font-size: 0.83rem;
+    color: var(--text);
+    font-weight: 400;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-bottom: 2px;
+    transition: color 0.15s;
+  }
+
+  .link-card:hover .link-name { color: var(--accent2); }
+
+  .link-domain {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--text-dimmer);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+  }
+
+  /* No results */
+  #no-results {
+    display: none;
+    text-align: center;
+    padding: 60px 0;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-dimmer);
+    font-size: 0.85rem;
+  }
+
+  /* Hidden */
+  .hidden { display: none !important; }
+
+  /* Highlight */
+  mark {
+    background: rgba(79,255,176,0.25);
+    color: var(--accent);
+    border-radius: 2px;
+    padding: 0 1px;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="page-wrap">
+
+  <header>
+    <div class="header-top">
+      <h1>// bookmarks</h1>
+      <span class="count-badge" id="total-count">0 links</span>
+    </div>
+    <p class="subtitle">Personal link collection · click any card to open</p>
+  </header>
+
+  <div class="search-wrap">
+    <input type="text" id="search" placeholder="search by name or domain..." autocomplete="off" spellcheck="false">
+  </div>
+
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-cat="all">All</div>
+  </div>
+
+  <div id="sections-wrap"></div>
+  <div id="no-results">No links match your search.</div>
+
+</div>
+
+<script>
+const DATA = [
+  // ── LIGO / Gravitational Waves ─────────────────────────────────────
+  { cat: "LIGO & Gravitational Waves", name: "GWpy Documentation", url: "https://gwpy.github.io/docs/3.0.12/overview/", icon: "https://gwpy.github.io/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "SNAX (GitLab)", url: "https://git.ligo.org/snax/snax", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "GWOSC Learning Path", url: "https://gwosc.org/path/", icon: "https://gwosc.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "LIGO Virgo KAGRA – YouTube", url: "https://www.youtube.com/@LIGOVirgo", icon: "https://www.youtube.com/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "Dingo GW Documentation", url: "https://dingo-gw.readthedocs.io/en/latest/", icon: "https://dingo-gw.readthedocs.io/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "PyCBC Inference Tutorial", url: "https://github.com/aleynaakyuz/PyCBC_inference_tutorial/tree/main/workflow", icon: "https://github.com/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "PyCBC Offline Analysis – O4c Run Schedule", url: "https://git.ligo.org/pycbc/offline-analysis/-/wikis/O4c-Run-Schedule", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "PyCBC O4b Run Schedule", url: "https://git.ligo.org/pycbc/offline-analysis/-/wikis/SSM-O4b-run-schedule", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "PyCBC Broad O4c Results Checklist", url: "https://git.ligo.org/pycbc/offline-analysis/-/wikis/Broad-O4c-results-checklist", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "Stuart Anderson's Page (CIT)", url: "https://labcit.ligo.caltech.edu/~anderson/", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "Boris Goncharov – Notes on LIGO Data", url: "https://bgoncharov.com/ligo-data/", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "Gregory Ashton's Homepage", url: "https://gregoryashton.github.io/", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "Scattering Subtraction (GitLab)", url: "https://git.ligo.org/ArthurTolley/scattering-subtraction/-/tree/master/MatchedFiltering", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "Dark Siren Hubble Constant – MNRAS", url: "https://academic.oup.com/mnras/article/528/2/3249/7513767", icon: "https://academic.oup.com/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "GW BBH Population with UMAP – INSPIRE", url: "https://inspirehep.net/literature/3127446", icon: "https://inspirehep.net/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "Balzan Conference – Open Issues in Gravitation", url: "https://www.carmin.tv/en/collections/balzan-conference-on-open-issues-in-gravitation", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "GW Machine Learning – SpringerLink Collection", url: "https://link.springer.com/collections/dbgfcbcfai", icon: "https://link.springer.com/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "260424 PyCBC O4c Boxes – Google Slides", url: "https://docs.google.com/presentation/d/10VnNZsLRwjcchK8zwIoB4KDXzEpvk_N8W0hHmfUkp5o/edit", icon: "https://docs.google.com/favicon.ico" },
+  { cat: "LIGO & Gravitational Waves", name: "LVK 2026 Conference (Pisa)", url: "https://lvk2026pisa.org/conference-information/#program", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "Alcaze – Tito Dal Canton", url: "https://www.dalcanton.it/tito/code/alcaze/", icon: "" },
+  { cat: "LIGO & Gravitational Waves", name: "Experimental Gravity – Clifford Will", url: "https://www.phys.ufl.edu/~cmw/expgravnew.html", icon: "" },
+
+  // ── Computing / HTC ────────────────────────────────────────────────
+  { cat: "Computing & HTC", name: "HTCondor Home", url: "https://htcondor.org/", icon: "https://htcondor.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTCondor Manual – condor_submit", url: "https://htcondor.readthedocs.io/en/latest/man-pages/condor_submit.html#retry_request_memory", icon: "https://htcondor.readthedocs.io/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTCondor Python Bindings Tutorials", url: "https://htcondor.readthedocs.io/en/main/apis/python-bindings/tutorials/index.html", icon: "https://htcondor.readthedocs.io/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTCondor: Memory Leak in Linux Kernel", url: "https://htcondor.org/featured-users/2026-02-16-kmem.html", icon: "https://htcondor.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTCondor Workshop Autumn 2025 – Prague (Indico)", url: "https://indico.cern.ch/event/1459943/contributions/6661378/", icon: "https://indico.cern.ch/favicon.ico" },
+  { cat: "Computing & HTC", name: "OSG-HTC Portal Documentation", url: "https://portal.osg-htc.org/documentation/", icon: "https://portal.osg-htc.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "OSG School 2025 Materials", url: "https://osg-htc.org/school-2025/materials/", icon: "https://osg-htc.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "OSG User School 2019 Materials", url: "https://osg-htc.org/user-school-2019/#materials/", icon: "https://osg-htc.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "OSG School 2026 Application", url: "https://uwmadison.co1.qualtrics.com/jfe/form/SV_cI3kiXR6ai6GcJM", icon: "" },
+  { cat: "Computing & HTC", name: "OSG Training Materials (Portal)", url: "https://portal.osg-htc.org/documentation/support_and_training/training/materials/", icon: "" },
+  { cat: "Computing & HTC", name: "OSG Acceptable Use Policy", url: "https://osg-htc.org/docs/submit/ap-ospool-aup/", icon: "" },
+  { cat: "Computing & HTC", name: "Throughput Computing Week 2026", url: "https://chtc.cs.wisc.edu/events/2026/06/09/throughput-computing-week", icon: "https://chtc.cs.wisc.edu/favicon.ico" },
+  { cat: "Computing & HTC", name: "CHTC Home", url: "https://chtc.cs.wisc.edu/", icon: "https://chtc.cs.wisc.edu/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTCondor Jira – All Work", url: "https://opensciencegrid.atlassian.net/jira/software/c/projects/HTCONDOR/issues", icon: "https://opensciencegrid.atlassian.net/favicon.ico" },
+  { cat: "Computing & HTC", name: "Jira Spaces", url: "https://opensciencegrid.atlassian.net/jira/projects", icon: "https://opensciencegrid.atlassian.net/favicon.ico" },
+  { cat: "Computing & HTC", name: "Pegasus WMS Documentation", url: "https://pegasus.isi.edu/documentation/", icon: "https://pegasus.isi.edu/favicon.ico" },
+  { cat: "Computing & HTC", name: "Nautilus Cluster (NRP) – Getting Started", url: "https://nrp.ai/documentation/", icon: "https://nrp.ai/favicon.ico" },
+  { cat: "Computing & HTC", name: "NRP LLM Status", url: "https://nrp.ai/llm-status/", icon: "" },
+  { cat: "Computing & HTC", name: "GWDataFind with HTCondor", url: "https://gwdatafind.readthedocs.io/en/stable/htcondor/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN Computing Roadmap", url: "https://computing.docs.ligo.org/guide/compsoft/roadmap/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN Containers Guide", url: "https://computing.docs.ligo.org/guide/dhtc/containers/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN Tutorials", url: "https://computing.docs.ligo.org/guide/tutorials/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN Contributing Guide", url: "https://computing.docs.ligo.org/guide/contributing/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN About CompSoft", url: "https://computing.docs.ligo.org/guide/compsoft/about/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN Conda igwn-py311", url: "https://computing.docs.ligo.org/conda/environments/igwn-py311/", icon: "" },
+  { cat: "Computing & HTC", name: "IGWN DHTC Tutorial (GitLab)", url: "https://git.ligo.org/computing/distributed/igwn-dhtc-tutorial", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "IGWN DHTC OSG Tutorial 2024 – Google Docs", url: "https://docs.google.com/document/d/1DWX1iwjLU9CM-yvL79Oy9APYxTXNGWrHpnKbh6pC6Ho/edit", icon: "https://docs.google.com/favicon.ico" },
+  { cat: "Computing & HTC", name: "IGWN Monitoring Dashboard2 – CONTRIBUTING.md", url: "https://git.ligo.org/computing/monitoring/dashboard2-configuration/-/blob/main/CONTRIBUTING.md", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "IGWN MFA (GitLab)", url: "https://git.ligo.org/computing/iam/mfa", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "IGWN Help Desk Issues", url: "https://git.ligo.org/computing/helpdesk/-/issues", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "IGWN Computing Workshop LVK-Mel Tutorial", url: "https://git.ligo.org/computing/tutorials/202503_computing-workshop-lvk-mel", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "OSDF DAGMan Example (GitLab)", url: "https://git.ligo.org/james-clark/osdf-dagman-example", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "ngdd GitLab Group", url: "https://git.ligo.org/ngdd", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "Quadlet IOC Test (GitLab)", url: "https://git.ligo.org/jonathan-hanks/quadlet_ioc_test", icon: "https://git.ligo.org/favicon.ico" },
+  { cat: "Computing & HTC", name: "Pelican Platform Training Origin", url: "https://github.com/PelicanPlatform/training-origin", icon: "https://github.com/favicon.ico" },
+  { cat: "Computing & HTC", name: "Rucio – Scientific Data Management", url: "https://rucio.cern.ch/", icon: "https://rucio.cern.ch/favicon.ico" },
+  { cat: "Computing & HTC", name: "January 2026 IGWN/PATh DHTC F2F Meeting Agenda", url: "https://docs.google.com/document/d/1YW20EbkOFCnkWHi1W9VmkXg5L1axoJHeFGFFONZNdUA/edit", icon: "https://docs.google.com/favicon.ico" },
+  { cat: "Computing & HTC", name: "HTC 24 Schedule (Indico)", url: "https://agenda.hep.wisc.edu/event/2175/timetable/#20240708", icon: "" },
+  { cat: "Computing & HTC", name: "HEP SF India–IUCAA Workshop Registration", url: "https://events.gw.iucaa.in/event/8/registrations/1/", icon: "" },
+  { cat: "Computing & HTC", name: "Ligo India DHTC Tutorial Sep 2024 (GitLab)", url: "https://gitlab.ligo-india.in/harshad.sawant/igwn-dhtc-osg/-/tree/main/ligo-india-dhtc-tutorial-sep2024", icon: "" },
+  { cat: "Computing & HTC", name: "Icinga Monitoring Webinars", url: "https://icinga.com/webinars/", icon: "https://icinga.com/favicon.ico" },
+
+  // ── Jupyter & Clusters ─────────────────────────────────────────────
+  { cat: "Jupyter & Clusters", name: "PIC JupyterHub", url: "https://jupyter.pic.es/hub/user/jsadiq/lab", icon: "" },
+  { cat: "Jupyter & Clusters", name: "OSGHC AP40 Jupyter", url: "https://notebook.ospool.osg-htc.org/user/jam.sadiq@ligo.org/lab", icon: "" },
+  { cat: "Jupyter & Clusters", name: "Caltech JupyterLab (CIT)", url: "https://jupyter.ligo.caltech.edu/user/jam.sadiq/lab/tree/projects", icon: "" },
+  { cat: "Jupyter & Clusters", name: "CIT ~jam.sadiq Index", url: "https://ldas-jobs.ligo.caltech.edu/~jam.sadiq/", icon: "" },
+  { cat: "Jupyter & Clusters", name: "OSPool JupyterHub Login", url: "https://notebook.ospool.osg-htc.org/hub/login", icon: "" },
+  { cat: "Jupyter & Clusters", name: "Docker Hub", url: "https://hub.docker.com/", icon: "https://hub.docker.com/favicon.ico" },
+  { cat: "Jupyter & Clusters", name: "Apptainer – Install Unprivileged Binaries", url: "https://apptainer.org/docs/admin/1.4/installation.html#install-unprivileged-from-pre-built-binaries", icon: "" },
+
+  // ── Machine Learning & Deep Learning ──────────────────────────────
+  { cat: "Machine Learning & AI", name: "PyTorch", url: "https://pytorch.org/", icon: "https://pytorch.org/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "Zero to Mastery: Learn PyTorch", url: "https://www.learnpytorch.io/", icon: "" },
+  { cat: "Machine Learning & AI", name: "Deep Learning with PyTorch (Free Book)", url: "https://freecomputerbooks.com/Deep-Learning-with-PyTorch.html", icon: "" },
+  { cat: "Machine Learning & AI", name: "The Deep Learning Book (Goodfellow)", url: "https://www.deeplearningbook.org/", icon: "" },
+  { cat: "Machine Learning & AI", name: "MIT Deep Learning 6.S191", url: "https://introtodeeplearning.com/", icon: "" },
+  { cat: "Machine Learning & AI", name: "fast.ai – Practical Deep Learning for Coders", url: "https://course.fast.ai/", icon: "https://course.fast.ai/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "UvA Tutorial 11: Normalizing Flows", url: "https://uvadlc-notebooks.readthedocs.io/en/latest/tutorial_notebooks/tutorial11/NF_image_modeling.html", icon: "" },
+  { cat: "Machine Learning & AI", name: "PyTorch Lightning (GitHub)", url: "https://github.com/Lightning-AI/pytorch-lightning", icon: "https://github.com/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "PyTorch-Ignite", url: "https://pytorch-ignite.ai/", icon: "" },
+  { cat: "Machine Learning & AI", name: "Meta AI Demos – Segment Anything", url: "https://aidemos.meta.com/segment-anything/", icon: "" },
+  { cat: "Machine Learning & AI", name: "HuggingFace Diffusers Quickstart", url: "https://huggingface.co/docs/diffusers/en/quicktour", icon: "https://huggingface.co/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "Mistral AI", url: "https://mistral.ai/", icon: "https://mistral.ai/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "Andrej Karpathy", url: "https://karpathy.ai/", icon: "" },
+  { cat: "Machine Learning & AI", name: "karpathy/llm.c (GitHub)", url: "https://github.com/karpathy/llm.c", icon: "https://github.com/favicon.ico" },
+  { cat: "Machine Learning & AI", name: "Kosmos: AI Scientist for Autonomous Discovery", url: "https://edisonscientific.com/articles/announcing-kosmos", icon: "" },
+  { cat: "Machine Learning & AI", name: "arXiv Smart Reader (AI Summaries)", url: "https://scireader.lovable.app/", icon: "" },
+  { cat: "Machine Learning & AI", name: "NVIDIA Academic Grant Program", url: "https://www.nvidia.com/en-us/industries/higher-education-research/academic-grant-program/", icon: "https://www.nvidia.com/favicon.ico" },
+
+  // ── Bayesian & Statistics ─────────────────────────────────────────
+  { cat: "Bayesian & Statistics", name: "Probability Theory: The Logic of Science (Jaynes PDF)", url: "https://bayes.wustl.edu/etj/prob/book.pdf", icon: "" },
+  { cat: "Bayesian & Statistics", name: "Bayesian Inference with PyMC", url: "https://allendowney.github.io/BayesianInferencePyMC/index.html", icon: "" },
+  { cat: "Bayesian & Statistics", name: "Zuko: Normalizing Flows Basics", url: "https://zuko.readthedocs.io/stable/tutorials/basics.html", icon: "" },
+  { cat: "Bayesian & Statistics", name: "Signal Transforms & Filters – Python Time Series", url: "https://filippomb.github.io/python-time-series-handbook/notebooks/08/signal-transforms-filters.html", icon: "" },
+
+  // ── Research Data Management ───────────────────────────────────────
+  { cat: "Research Data Management", name: "RDMkit", url: "https://rdmkit.elixir-europe.org/", icon: "https://rdmkit.elixir-europe.org/favicon.ico" },
+  { cat: "Research Data Management", name: "ELIXIR RDMkit (GitHub)", url: "https://github.com/elixir-europe/rdmkit", icon: "https://github.com/favicon.ico" },
+  { cat: "Research Data Management", name: "Welcome to ELIXIR", url: "https://elixir-europe.org/", icon: "" },
+  { cat: "Research Data Management", name: "OSCARS – MADDEN Project", url: "https://oscars-project.eu/projects/madden-multi-ri-access-and-discovery-data-experiment-networking", icon: "" },
+  { cat: "Research Data Management", name: "BSC Dataverse Community Meeting 2026", url: "https://www.bsc.es/news/events/dataverse-community-meeting-2026", icon: "" },
+  { cat: "Research Data Management", name: "DCM 2026 Registration", url: "https://dcm2026.com/registration/", icon: "" },
+
+  // ── Supercomputing & HPC ──────────────────────────────────────────
+  { cat: "Supercomputing & HPC", name: "RES – Spanish Supercomputing Network", url: "https://www.res.es/", icon: "" },
+  { cat: "Supercomputing & HPC", name: "CESGA – 2 Research Positions", url: "https://www.cesga.es/2-plazas-investigador-a-laboral-fijo/", icon: "" },
+  { cat: "Supercomputing & HPC", name: "BSC AI Factory – Call for Startups", url: "https://bsc-aifactory.eu/call-for-startups/", icon: "" },
+  { cat: "Supercomputing & HPC", name: "BSC-CNS Job (408_25_ES_CES_RE3)", url: "https://www.bsc.es/join-us/job-opportunities/40825escesre3", icon: "" },
+
+  // ── Jobs & Careers ─────────────────────────────────────────────────
+  { cat: "Jobs & Careers", name: "Jobs at Anthropic", url: "https://job-boards.greenhouse.io/anthropic", icon: "" },
+  { cat: "Jobs & Careers", name: "IRIS-HEP Available Positions", url: "https://iris-hep.org/jobs", icon: "" },
+  { cat: "Jobs & Careers", name: "DZA – Postdoc in GW & Multi-Messenger Astronomy", url: "https://jobs.deutscheszentrumastrophysik.de/en-GB/jobs/7344919-a03-26-02-postdoctoral-researcher-in-gravitational-wave-and-multi-messenger-astronomy-f-m-d", icon: "" },
+  { cat: "Jobs & Careers", name: "CEA-Saclay IPT (Academic Jobs Online)", url: "https://academicjobsonline.org/ajo/jobs/31686", icon: "" },
+  { cat: "Jobs & Careers", name: "IFAE Postdoctoral Fellowships", url: "https://www.ifae.es/careers/postdoc-fellowships/", icon: "" },
+  { cat: "Jobs & Careers", name: "Beatriu de Pinós Postdoctoral Grants 2025", url: "https://tramits.gencat.cat/ca/tramits/tramits-temes/Ajuts-postdoctorals-Beatriu-de-Pinos-BP-2023", icon: "" },
+  { cat: "Jobs & Careers", name: "UPSaclay STAR φ Fellow", url: "https://www.cofund-physics.universite-paris-saclay.fr/", icon: "" },
+  { cat: "Jobs & Careers", name: "Faculty Position – Gravitation & Cosmology, China", url: "https://hyperspace.uni-frankfurt.de/2026/01/06/faculty-position-in-gravitation-and-cosmology-high-energy-physics-zhenjiang-china/", icon: "" },
+  { cat: "Jobs & Careers", name: "Lecturer/Postdoc – Applied Math/Statistics (Canterbury)", url: "https://jobs.canterbury.ac.nz/jobdetails/ajid/D6k6a/Lecturer-Postdoctoral-Fellow-in-Applied-Mathematics-or-Statistics-2-year-fixed-term-,31251", icon: "" },
+  { cat: "Jobs & Careers", name: "Lecturer – Physics Astrophysics (Newcastle)", url: "https://www.livehire.com/careers/universityofnewcastle/job/E8PYF/USLOFBDF0Z/lecturer-physics-astrophysics", icon: "" },
+  { cat: "Jobs & Careers", name: "Assistant Professor – AI for Science (UvA)", url: "https://werkenbij.uva.nl/en/vacancies/assistant-professor-in-ai-for-science-ai4science-netherlands-14989", icon: "" },
+  { cat: "Jobs & Careers", name: "Assistant/Associate Professor Math (Tenure Track)", url: "https://ats.talentadore.com/apply/assistant-associate-professor-tenure-track-in-mathematics/ZQ5lQv", icon: "" },
+  { cat: "Jobs & Careers", name: "Lecturer – Troy University", url: "https://www.troyuniversityjobs.com/postings/46993", icon: "" },
+  { cat: "Jobs & Careers", name: "JSPS Fellowship 2026 Application Guidelines", url: "https://www.jsps.go.jp/file/storage/j-fellow/j-fellow_14/application_requirements/2026/2026_applicationguideline_e.pdf", icon: "" },
+  { cat: "Jobs & Careers", name: "University of Tokyo – Open Positions", url: "https://www.s.u-tokyo.ac.jp/en/recruit/?id=1935", icon: "" },
+  { cat: "Jobs & Careers", name: "Jiangsu University of Science & Technology", url: "https://ssc.just.edu.cn/", icon: "" },
+  { cat: "Jobs & Careers", name: "Teaching Jobs in Spain – TES", url: "https://www.tes.com/jobs/browse/spain", icon: "" },
+  { cat: "Jobs & Careers", name: "EU Deep Tech & Research Opportunities #3", url: "https://joinphasetransition.substack.com/p/eu-deep-tech-and-research-opportunities-b99", icon: "" },
+  { cat: "Jobs & Careers", name: "UK Metascience Unit – UKRI", url: "https://www.ukri.org/what-we-do/browse-our-areas-of-investment-and-support/uk-metascience-unit/", icon: "" },
+
+  // ── Visas ──────────────────────────────────────────────────────────
+  { cat: "Visas & Admin", name: "US Student Visa – Travel.State.Gov", url: "https://travel.state.gov/content/travel/en/us-visas/study/student-visa.html", icon: "" },
+  { cat: "Visas & Admin", name: "US Embassy Spain – Visas", url: "https://es.usembassy.gov/visas/", icon: "" },
+  { cat: "Visas & Admin", name: "Nonimmigrant Visa – CEAC (DS-160)", url: "https://ceac.state.gov/GenNIV/Default.aspx", icon: "" },
+  { cat: "Visas & Admin", name: "BORM – Sede Electrónica Murcia", url: "https://www.borm.es/#/home/anuncio/27-02-2026/869", icon: "" },
+
+  // ── Learning & Books ───────────────────────────────────────────────
+  { cat: "Learning & Books", name: "Free Programming Books (GitHub)", url: "https://github.com/EbookFoundation/free-programming-books/blob/main/books/free-programming-books-langs.md", icon: "https://github.com/favicon.ico" },
+  { cat: "Learning & Books", name: "Teach Yourself C++ (CompPhysics)", url: "https://compphysics.github.io/ComputationalPhysics/doc/pub/learningcpp/html/learningcpp-bs.html", icon: "" },
+  { cat: "Learning & Books", name: "Computational Physics (GitHub)", url: "https://github.com/CompPhysics/ComputationalPhysics", icon: "https://github.com/favicon.ico" },
+  { cat: "Learning & Books", name: "Astral (Python Tools – uv, ruff)", url: "https://github.com/astral-sh", icon: "https://github.com/favicon.ico" },
+  { cat: "Learning & Books", name: "Michael Zingale's Homepage", url: "https://zingale.github.io/", icon: "" },
+  { cat: "Learning & Books", name: "Andrew McNutt (Research)", url: "https://www.mcnutt.in/#/work", icon: "" },
+  { cat: "Learning & Books", name: "Po-Shen Loh – Reimagining Education", url: "https://poshenloh.com/", icon: "" },
+  { cat: "Learning & Books", name: "EinsteinPy – Getting Started", url: "https://einsteinpy-einsteinpy.readthedocs.io/en/latest/getting_started.html", icon: "" },
+  { cat: "Learning & Books", name: "Bertrand Russell: Religion and Science (1935)", url: "https://russell-j.com/beginner/Religion_and_Science_1935-TEXT.HTM", icon: "" },
+  { cat: "Learning & Books", name: "Richard Feynman Collection – YouTube", url: "https://www.youtube.com/playlist?list=PLISEtDmihMo2iO8CFRZ77Hx4Jf4rAyWmM", icon: "https://www.youtube.com/favicon.ico" },
+  { cat: "Learning & Books", name: "Aula Internacional Plus 1 (Spanish)", url: "https://online.fliphtml5.com/maese/zmvl/#p=3", icon: "" },
+  { cat: "Learning & Books", name: "Joseph Areeda (GitHub)", url: "https://github.com/areeda", icon: "https://github.com/favicon.ico" },
+
+  // ── Personal / Misc ────────────────────────────────────────────────
+  { cat: "Personal & Misc", name: "Syra Coffee – Filter Collection", url: "https://syra.coffee/collections/coffee/Filter", icon: "" },
+  { cat: "Personal & Misc", name: "Hogg's Blog", url: "https://www.blogger.com/profile/18398397408280534592", icon: "" },
+  { cat: "Personal & Misc", name: "IFAE – Mokhtar Chmeissani", url: "https://www.ifae.es/people/chmeissani-mokhtar/", icon: "" },
+  { cat: "Personal & Misc", name: "James–Jam Meet (Google Docs)", url: "https://docs.google.com/document/d/1fFlYfDTGFvbRBuM7RFyXoJmdOVCS3GU3Em0uMbvIwkM/edit", icon: "https://docs.google.com/favicon.ico" },
+  { cat: "Personal & Misc", name: "Tom Dent – Slack DM (GWastro)", url: "https://app.slack.com/client/T8V1B53KP/D01456ELLJX", icon: "https://app.slack.com/favicon.ico" },
+  { cat: "Personal & Misc", name: "James Clark – Slack DM (OSG)", url: "https://app.slack.com/client/T03MU5LDV/D0A2HEF5WF8", icon: "https://app.slack.com/favicon.ico" },
+  { cat: "Personal & Misc", name: "spiff.rit.edu/richmond", url: "http://spiff.rit.edu/richmond/index.html", icon: "" },
+];
+
+// ── Helpers ────────────────────────────────────────────────────────────────
+function getDomain(url) {
+  try { return new URL(url).hostname.replace(/^www\./, ''); }
+  catch { return url; }
+}
+
+function getFaviconUrl(url) {
+  try { const u = new URL(url); return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=32`; }
+  catch { return ''; }
+}
+
+function highlight(text, q) {
+  if (!q) return text;
+  const re = new RegExp(`(${q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')})`, 'gi');
+  return text.replace(re, '<mark>$1</mark>');
+}
+
+// ── Build UI ───────────────────────────────────────────────────────────────
+const cats = [...new Set(DATA.map(d => d.cat))];
+const tabsEl = document.getElementById('tabs');
+const sectionsWrap = document.getElementById('sections-wrap');
+
+// Populate total count
+document.getElementById('total-count').textContent = `${DATA.length} links`;
+
+// Build category tabs
+cats.forEach(cat => {
+  const tab = document.createElement('div');
+  tab.className = 'tab';
+  tab.dataset.cat = cat;
+  tab.textContent = cat;
+  tabsEl.appendChild(tab);
+});
+
+// Build sections
+cats.forEach(cat => {
+  const items = DATA.filter(d => d.cat === cat);
+  const section = document.createElement('div');
+  section.className = 'section';
+  section.dataset.cat = cat;
+
+  section.innerHTML = `
+    <div class="section-header">
+      <span class="section-title">${cat}</span>
+      <div class="section-line"></div>
+      <span class="section-count">${items.length}</span>
+    </div>
+    <div class="link-grid" id="grid-${cat.replace(/\W+/g,'_')}"></div>
+  `;
+  sectionsWrap.appendChild(section);
+
+  const grid = section.querySelector('.link-grid');
+  items.forEach(item => {
+    const a = document.createElement('a');
+    a.className = 'link-card';
+    a.href = item.url;
+    a.target = '_blank';
+    a.rel = 'noopener noreferrer';
+    a.dataset.name = item.name.toLowerCase();
+    a.dataset.domain = getDomain(item.url).toLowerCase();
+    const faviconSrc = getFaviconUrl(item.url);
+    a.innerHTML = `
+      <img class="link-favicon" src="${faviconSrc}" alt="" onerror="this.style.display='none'">
+      <span class="link-text">
+        <span class="link-name">${item.name}</span>
+        <span class="link-domain">${getDomain(item.url)}</span>
+      </span>
+    `;
+    grid.appendChild(a);
+  });
+});
+
+// ── Tab filter ─────────────────────────────────────────────────────────────
+let activeTab = 'all';
+
+tabsEl.addEventListener('click', e => {
+  const tab = e.target.closest('.tab');
+  if (!tab) return;
+  activeTab = tab.dataset.cat;
+  tabsEl.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.cat === activeTab));
+  applyFilters();
+});
+
+// ── Search ─────────────────────────────────────────────────────────────────
+const searchEl = document.getElementById('search');
+const noResults = document.getElementById('no-results');
+
+searchEl.addEventListener('input', applyFilters);
+
+function applyFilters() {
+  const q = searchEl.value.trim().toLowerCase();
+  let totalVisible = 0;
+
+  document.querySelectorAll('.section').forEach(section => {
+    const cat = section.dataset.cat;
+    const catMatch = activeTab === 'all' || activeTab === cat;
+    if (!catMatch) { section.classList.add('hidden'); return; }
+    section.classList.remove('hidden');
+
+    let sectionVisible = 0;
+    section.querySelectorAll('.link-card').forEach(card => {
+      const nameMatch = !q || card.dataset.name.includes(q) || card.dataset.domain.includes(q);
+      card.classList.toggle('hidden', !nameMatch);
+      if (nameMatch) {
+        sectionVisible++;
+        // highlight
+        const nameEl = card.querySelector('.link-name');
+        const originalName = DATA.find(d => d.name.toLowerCase() === card.dataset.name)?.name || card.dataset.name;
+        nameEl.innerHTML = highlight(originalName, q);
+      }
+    });
+
+    section.classList.toggle('hidden', sectionVisible === 0);
+    totalVisible += sectionVisible;
+  });
+
+  noResults.style.display = totalVisible === 0 ? 'block' : 'none';
+}
+</script>
+</body>
+</html>
